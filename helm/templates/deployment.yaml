@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "calibre-web-automated.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "calibre-web-automated.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "calibre-web-automated.name" . }}
+    spec:
+      containers:
+        - name: calibre-web-automated
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PUID
+              value: "{{ .Values.env.PUID }}"
+            - name: PGID
+              value: "{{ .Values.env.PGID }}"
+            - name: TZ
+              value: "{{ .Values.env.TZ }}"
+          ports:
+            - containerPort: 8083
+          volumeMounts:
+            - name: config
+              mountPath: {{ .Values.persistence.config.mountPath }}
+            - name: ingest
+              mountPath: {{ .Values.persistence.ingest.mountPath }}
+            - name: library
+              mountPath: {{ .Values.persistence.library.mountPath }}
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: config-pvc
+        - name: ingest
+          persistentVolumeClaim:
+            claimName: ingest-pvc
+        - name: library
+          persistentVolumeClaim:
+            claimName: library-pvc

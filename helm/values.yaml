@@ -1,0 +1,31 @@
+image:
+  repository: docker-registry.parrot-hen.ts.net:5000/calibre-web-automated
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8083
+  annotations:
+    tailscale.com/hostname: calibre
+    tailscale.com/expose: "true"
+
+env:
+  PUID: 1000
+  PGID: 1000
+  TZ: UTC
+
+persistence:
+  storageClassName: nfs-ssd-provisioner
+  config:
+    enabled: true
+    mountPath: /config
+    size: 1Gi
+  ingest:
+    enabled: true
+    mountPath: /cwa-book-ingest
+    size: 1Gi
+  library:
+    enabled: true
+    mountPath: /calibre-library
+    size: 5Gi

@@ -1,0 +1,3 @@
+1. Access the Calibre-Web Automated UI at http://<cluster-ip>:8083
+2. Configure your PVCs for persistent storage.
+3. Set environment variables in values.yaml as needed.
